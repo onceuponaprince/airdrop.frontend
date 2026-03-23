@@ -79,6 +79,82 @@ Respond ONLY with a valid JSON object in this exact format, no other text:
   }
 }`
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+function streamPayload(chunk: unknown): string {
+  return `${JSON.stringify(chunk)}\n`
+}
+
+function createScoreStream(result: {
+  teachingValue: number
+  originality: number
+  communityImpact: number
+  compositeScore: number
+  farmingFlag: string
+  farmingExplanation: string
+  dimensionExplanations: {
+    teachingValue: string
+    originality: string
+    communityImpact: string
+  }
+  scoredAt: string
+}) {
+  const encoder = new TextEncoder()
+
+  return new ReadableStream({
+    async start(controller) {
+      controller.enqueue(encoder.encode(streamPayload({ type: "status", phase: "reading" })))
+      await sleep(250)
+
+      controller.enqueue(
+        encoder.encode(
+          streamPayload({
+            type: "partial",
+            partial: {
+              teachingValue: Math.max(0, Math.round(result.teachingValue * 0.45)),
+              originality: Math.max(0, Math.round(result.originality * 0.45)),
+              communityImpact: Math.max(0, Math.round(result.communityImpact * 0.45)),
+            },
+          })
+        )
+      )
+      await sleep(300)
+
+      controller.enqueue(
+        encoder.encode(
+          streamPayload({
+            type: "partial",
+            partial: {
+              teachingValue: Math.max(0, Math.round(result.teachingValue * 0.75)),
+              originality: Math.max(0, Math.round(result.originality * 0.75)),
+              communityImpact: Math.max(0, Math.round(result.communityImpact * 0.75)),
+            },
+          })
+        )
+      )
+      await sleep(300)
+
+      controller.enqueue(
+        encoder.encode(
+          streamPayload({
+            type: "partial",
+            partial: {
+              teachingValue: result.teachingValue,
+              originality: result.originality,
+              communityImpact: result.communityImpact,
+            },
+          })
+        )
+      )
+
+      controller.enqueue(encoder.encode(streamPayload({ type: "final", result })))
+      controller.close()
+    },
+  })
+}
+
 export async function POST(req: NextRequest) {
   // Rate limit check
   const ip =
@@ -108,7 +184,7 @@ export async function POST(req: NextRequest) {
 
   if (!process.env.ANTHROPIC_API_KEY) {
     // Dev fallback: return mock scores when no API key configured
-    return NextResponse.json({
+    const mockResult = {
       teachingValue: 72,
       originality: 58,
       communityImpact: 65,
@@ -122,6 +198,14 @@ export async function POST(req: NextRequest) {
         communityImpact: "Mock score — real scoring requires API key.",
       },
       scoredAt: new Date().toISOString(),
+    }
+
+    return new NextResponse(createScoreStream(mockResult), {
+      headers: {
+        "Content-Type": "application/x-ndjson; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+      },
     })
   }
 
@@ -143,9 +227,17 @@ export async function POST(req: NextRequest) {
     // Parse JSON response
     const result = JSON.parse(responseText)
 
-    return NextResponse.json({
+    const response = {
       ...result,
       scoredAt: new Date().toISOString(),
+    }
+
+    return new NextResponse(createScoreStream(response), {
+      headers: {
+        "Content-Type": "application/x-ndjson; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+      },
     })
   } catch (err) {
     const anthropicResponse = anthropicErrorResponse(err)

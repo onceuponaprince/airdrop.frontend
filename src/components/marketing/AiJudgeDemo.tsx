@@ -15,7 +15,7 @@ import { fadeInUp } from "@/styles/theme"
 export function AiJudgeDemo() {
   const [inputText, setInputText] = useState("")
   const [activeDemoId, setActiveDemoId] = useState<string | null>(null)
-  const { status, result, error, score, reset } = useAiJudge()
+  const { status, result, liveScore, error, score, reset } = useAiJudge()
 
   const handleDemoSelect = (id: string, text: string) => {
     setActiveDemoId(id)
@@ -189,7 +189,7 @@ export function AiJudgeDemo() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col items-center gap-4"
+                  className="w-full flex flex-col items-center gap-4"
                 >
                   <div className="relative">
                     <div className="w-16 h-16 rounded-full border border-primary/20 flex items-center justify-center">
@@ -205,6 +205,32 @@ export function AiJudgeDemo() {
                     <p className="font-mono text-xs text-primary">AI Judge scoring…</p>
                     <p className="font-body text-xs text-muted-foreground">Reading for quality, not likes</p>
                   </div>
+
+                  {liveScore ? (
+                    <div className="w-full rounded-[var(--radius)] border border-primary/30 bg-primary/5 p-4 space-y-3">
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-primary">Live Score Reveal</p>
+                      {[
+                        { label: 'Teaching Value', value: liveScore.teachingValue },
+                        { label: 'Originality', value: liveScore.originality },
+                        { label: 'Community Impact', value: liveScore.communityImpact },
+                      ].map((row) => (
+                        <div key={row.label} className="space-y-1">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-muted-foreground">{row.label}</span>
+                            <span className="font-mono text-primary">{row.value}</span>
+                          </div>
+                          <div className="h-2 rounded bg-secondary overflow-hidden">
+                            <motion.div
+                              className="h-full bg-primary"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${row.value}%` }}
+                              transition={{ duration: 0.3 }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </motion.div>
               ) : error ? (
                 <motion.div

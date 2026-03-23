@@ -1,12 +1,28 @@
+'use client';
+
+import { AppSidebar } from '@/components/app/AppSidebar';
+import { AppTopbar } from '@/components/app/AppTopbar';
+
 export default function AppLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  // Auth guard + sidebar will be wired in Phase 5 & 7
   return (
-    <div className="flex min-h-screen bg-background">
-      <main className="flex-1">{children}</main>
+    <div className="flex min-h-screen bg-[--background]">
+      {/* Sidebar */}
+      <AppSidebar />
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top bar */}
+        <AppTopbar />
+
+        {/* Page content */}
+        <main className="flex-1 overflow-hidden">
+          {children}
+        </main>
+      </div>
     </div>
-  )
+  );
 }

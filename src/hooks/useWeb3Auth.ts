@@ -1,0 +1,104 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib/api';
+import type { AuthTokens, Profile } from '@/types/api';
+
+interface AuthState {
+  isAuthenticated: boolean;
+  token: string | null;
+  user: Profile | null;
+  loading: boolean;
+  error: Error | null;
+}
+
+export function useWeb3Auth(): AuthState & {
+  login: (walletAddress: string, signature: string) => Promise<void>;
+  logout: () => void;
+} {
+  const { primaryWallet } = useDynamicContext();
+
+  // HANDOVER: backend JWT is persisted in localStorage for now.
+  // If security requirements tighten, migrate tokens to httpOnly cookie flow.
+  const [token, setToken] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('auth_token');
+  });
+  const [error, setError] = useState<Error | null>(null);
+  const [isAuthActionLoading, setIsAuthActionLoading] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      document.cookie = 'auth_token=; path=/; max-age=0; samesite=lax';
+      return;
+    }
+
+    // Mirror JWT into a readable cookie for edge middleware auth checks.
+    document.cookie = `auth_token=${token}; path=/; max-age=604800; samesite=lax`;
+  }, [token]);
+
+  // HANDOVER: profile query is the source of truth for hydrated auth user state.
+  const { data: user, isLoading: userLoading } = useQuery<Profile | null>({
+    queryKey: ['auth', 'profile'],
+    queryFn: async () => {
+      if (!token) return null;
+
+      api.setToken(token);
+      return api.get<Profile>('/auth/profile/');
+    },
+    enabled: token !== null,
+  });
+
+  const login = async (walletAddress: string, signature: string) => {
+    try {
+      setIsAuthActionLoading(true);
+      setError(null);
+
+      const response = await api.post<AuthTokens>('/auth/wallet-verify/', {
+        wallet_address: walletAddress,
+        signature,
+        dynamic_user_id: primaryWallet?.id || undefined,
+      });
+
+      localStorage.setItem('auth_token', response.access);
+      localStorage.setItem('refresh_token', response.refresh);
+      api.setToken(response.access);
+      setToken(response.access);
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error('Auth failed');
+      setToken(null);
+      setError(err);
+      throw err;
+    } finally {
+      setIsAuthActionLoading(false);
+    }
+  };
+
+  const logout = () => {
+    // HANDOVER: clear client-side auth cache eagerly to prevent stale protected UI.
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('refresh_token');
+    api.setToken(null);
+    setToken(null);
+    setError(null);
+  };
+
+  const state: AuthState = useMemo(
+    () => ({
+      isAuthenticated: token !== null,
+      token,
+      user: user ?? null,
+      loading: isAuthActionLoading || userLoading,
+      error,
+    }),
+    [token, user, userLoading, isAuthActionLoading, error]
+  );
+
+  return {
+    ...state,
+    login,
+    logout,
+  };
+}

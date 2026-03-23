@@ -63,6 +63,9 @@ export function Navigation() {
 
           {/* CTA */}
           <div className="hidden md:flex items-center gap-3">
+            <Link href="/login" className="font-body text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Login
+            </Link>
             <ArcadeButton
               size="sm"
               variant="secondary"
@@ -120,6 +123,13 @@ export function Navigation() {
                     {link.label}
                   </Link>
                 ))}
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="py-3 px-2 font-body text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 rounded-sm transition-colors"
+                >
+                  Login
+                </Link>
               </nav>
 
               <div className="mt-6">
