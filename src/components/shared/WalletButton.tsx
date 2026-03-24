@@ -1,16 +1,31 @@
 'use client';
 
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { Wallet } from 'lucide-react';
 import clsx from 'clsx';
+import { useOptionalDynamicContext } from '@/hooks/useOptionalDynamicContext';
 
 export function WalletButton() {
-  const { primaryWallet, setShowAuthFlow } = useDynamicContext();
+  const dynamicContext = useOptionalDynamicContext();
+  const primaryWallet = dynamicContext?.primaryWallet;
+  const setShowAuthFlow = dynamicContext.setShowAuthFlow;
 
   const address = primaryWallet?.address
     ? `${primaryWallet.address.slice(0, 6)}...${primaryWallet.address.slice(-4)}`
     : null;
   const isAuthenticated = Boolean(primaryWallet?.address);
+
+  if (!dynamicContext.available) {
+    return (
+      <button
+        disabled
+        className="px-4 py-2 rounded border border-[--border] text-[--muted-foreground] text-sm font-medium flex items-center gap-2 opacity-60 cursor-not-allowed"
+        title="Dynamic wallet provider is not configured"
+      >
+        <Wallet size={16} />
+        Wallet Unavailable
+      </button>
+    );
+  }
 
   if (!isAuthenticated || !address) {
     return (

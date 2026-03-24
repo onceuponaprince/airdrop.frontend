@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useDynamicContext } from '@dynamic-labs/sdk-react-core';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import type { AuthTokens, Profile } from '@/types/api';
+import { useOptionalDynamicContext } from './useOptionalDynamicContext';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -18,7 +18,8 @@ export function useWeb3Auth(): AuthState & {
   login: (walletAddress: string, signature: string) => Promise<void>;
   logout: () => void;
 } {
-  const { primaryWallet } = useDynamicContext();
+  const dynamicContext = useOptionalDynamicContext();
+  const primaryWallet = dynamicContext.primaryWallet;
 
   // HANDOVER: backend JWT is persisted in localStorage for now.
   // If security requirements tighten, migrate tokens to httpOnly cookie flow.

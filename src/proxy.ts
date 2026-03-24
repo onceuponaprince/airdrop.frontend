@@ -13,7 +13,7 @@ function buildApiBaseUrl(): string {
   return 'http://localhost:8000/api/v1';
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value;
 
   if (!token) {
