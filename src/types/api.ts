@@ -204,3 +204,203 @@ export interface PaginatedResponse<T> {
   previous: string | null
   results: T[]
 }
+
+// ── SPORE / Phase 3 ───────────────────────────────────────────────────────────
+
+export interface SporeBriefGenerateRequest {
+  brand: string
+  audience: string
+  platform: "twitter" | "discord" | "telegram" | "github"
+  tone: string
+  objective: string
+  budget?: string
+  conceptCount?: number
+}
+
+export interface SporeGeneratedConcept {
+  title: string
+  copy: string
+  engagementPrediction: number
+  riskScore: number
+  confidenceInterval: [number, number]
+  riskFlags: string[]
+}
+
+export interface SporeBriefGenerateResponse {
+  concepts: SporeGeneratedConcept[]
+  model: string
+}
+
+export interface SporeGraphQueryRequest {
+  queryText: string
+  hops?: number
+  damping?: number
+  topK?: number
+}
+
+export interface SporeGraphNode {
+  id: string
+  nodeKey: string
+  nodeType: string
+  title: string
+  sourcePlatform: string
+  payload: Record<string, unknown>
+  ingestionBatchId: string
+  rawRef: string
+  updatedAt: string
+}
+
+export interface SporeGraphQueryResultRow {
+  nodeKey: string
+  activation: number
+  node: SporeGraphNode
+}
+
+export interface SporeGraphQueryResponse {
+  queryHash: string
+  seedNodes: string[]
+  results: SporeGraphQueryResultRow[]
+}
+
+export interface SporeTwitterRelationshipResponse {
+  accountA: string
+  accountB: string
+  days: number
+  features: Record<string, number>
+}
+
+export interface SporeOpsSummaryResponse {
+  nodesTotal: number
+  edgesTotal: number
+  observationsTotal: number
+  scoreRunsTotal: number
+  recentScoreRuns24h: number
+  avgFinalScore: number
+}
+
+export interface SporeScoreRun {
+  id: string
+  contributionId: string
+  sourcePlatform: string
+  scoreVersion: string
+  context: Record<string, unknown>
+  variableScores: Record<string, number>
+  explainability: Record<string, string>
+  confidence: number
+  finalScore: number
+  createdAt: string
+}
+
+export interface SporeScoreRunListResponse {
+  count: number
+  results: SporeScoreRun[]
+}
+
+export interface SporeGraphQueryRun {
+  id: string
+  queryText: string
+  queryHash: string
+  hops: number
+  damping: number
+  topK: number
+  seedNodes: string[]
+  resultCount: number
+  results: Array<Record<string, unknown>>
+  createdAt: string
+}
+
+export interface SporeGraphQueryRunListResponse {
+  count: number
+  results: SporeGraphQueryRun[]
+}
+
+export interface SporeRelationshipRun {
+  id: string
+  accountA: string
+  accountB: string
+  days: number
+  features: Record<string, number>
+  createdAt: string
+}
+
+export interface SporeRelationshipRunListResponse {
+  count: number
+  results: SporeRelationshipRun[]
+}
+
+export interface SporeTenant {
+  id: string
+  slug: string
+  name: string
+  isActive: boolean
+  plan: string
+  quotaDailyQuery: number
+  quotaDailyIngest: number
+  quotaDailyRelationship: number
+  quotaDailyBriefGenerate: number
+  metadata: Record<string, unknown>
+}
+
+export interface SporeTenantMembership {
+  tenant: SporeTenant
+  role: "owner" | "admin" | "member" | "viewer"
+}
+
+export interface SporeTenantContextResponse {
+  activeTenant: SporeTenant
+  memberships: SporeTenantMembership[]
+}
+
+export interface SporeApiKey {
+  id: string
+  tenant: SporeTenant
+  name: string
+  prefix: string
+  isActive: boolean
+  lastUsedAt: string | null
+  createdAt: string
+  metadata: Record<string, unknown>
+}
+
+export interface SporeApiKeyListResponse {
+  count: number
+  results: SporeApiKey[]
+}
+
+export interface SporeUsageEvent {
+  id: string
+  metric: string
+  units: number
+  statusCode: number
+  requestId: string
+  metadata: Record<string, unknown>
+  createdAt: string
+}
+
+export interface SporeUsageEventListResponse {
+  count: number
+  results: SporeUsageEvent[]
+}
+
+export interface SporeAuditLog {
+  id: string
+  action: string
+  targetType: string
+  targetId: string
+  metadata: Record<string, unknown>
+  createdAt: string
+}
+
+export interface SporeAuditLogListResponse {
+  count: number
+  results: SporeAuditLog[]
+}
+
+export interface SubscriptionStatusResponse {
+  tenantSlug: string
+  plan: "starter" | "growth" | "enterprise" | null
+  status: "active" | "cancelled" | "past_due" | "trialing" | "incomplete" | "none"
+  portalAvailable: boolean
+  cancelAtPeriodEnd: boolean
+  currentPeriodEnd: string | null
+}

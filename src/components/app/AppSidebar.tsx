@@ -24,6 +24,7 @@ const NAVIGATION: {
   { label: 'Loot', href: '/loot' },
   { label: 'Notifications', href: '/notifications' },
   { label: 'Observability', href: '/observability' },
+  { label: 'SPORE Lab', href: '/spore-lab' },
   { label: 'Admin', href: '/admin' },
   { label: 'Settings', href: '/settings' },
 ];
