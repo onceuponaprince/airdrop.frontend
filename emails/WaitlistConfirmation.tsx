@@ -22,11 +22,6 @@ export function WaitlistConfirmation({
 }: WaitlistConfirmationProps) {
   return (
     <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>You&apos;re on the AI(r)Drop waitlist</title>
-      </head>
       <body style={styles.body}>
         <table width="100%" cellPadding={0} cellSpacing={0} style={styles.outer}>
           <tr>
@@ -77,6 +72,7 @@ export function WaitlistConfirmation({
                         <td>
                           <p style={styles.referralLabel}>Move up the list</p>
                           <p style={styles.referralText}>Each referral bumps you higher:</p>
+                          <p style={styles.referralCode}>Code: {referralCode}</p>
                           <p style={styles.referralUrl}>{referralUrl}</p>
                         </td>
                       </tr>
@@ -124,6 +120,7 @@ const styles: Record<string, React.CSSProperties> = {
   referralBox:  { backgroundColor: "#0A0B10", border: "1px solid #1F2937", borderRadius: 4, padding: 20 },
   referralLabel:{ margin: "0 0 8px", fontFamily: "monospace", fontSize: 10, color: "#6B7280", letterSpacing: "0.2em", textTransform: "uppercase" },
   referralText: { margin: "0 0 12px", fontSize: 13, color: "#E8ECF4", fontFamily: "Helvetica, Arial, sans-serif" },
+  referralCode: { margin: "0 0 8px", fontSize: 12, color: "#6B7280", fontFamily: "monospace" },
   referralUrl:  { margin: 0, fontFamily: "monospace", fontSize: 12, color: "#10B981", wordBreak: "break-all", backgroundColor: "#13141D", padding: "10px 12px", borderRadius: 4, border: "1px solid #1F2937" },
   footer:       { paddingTop: 24, textAlign: "center" },
   footerText:   { margin: "0 0 4px", fontSize: 11, color: "#6B7280", fontFamily: "Helvetica, Arial, sans-serif" },

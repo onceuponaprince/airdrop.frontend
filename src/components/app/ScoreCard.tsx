@@ -4,13 +4,14 @@ import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter"
 import { CrtOverlay } from "@/components/themed/CrtOverlay"
+import { Share2 } from "lucide-react"
 import {
   scoreReveal,
-  scoreBarFill,
   farmingBadge,
   screenShake,
 } from "@/styles/theme"
 import { SCORE_DIMENSIONS, FARMING_FLAGS } from "@/lib/constants"
+import { buildTwitterShareUrl } from "@/lib/shareScore"
 import type { JudgeResult } from "@/types/api"
 
 interface ScoreCardProps {
@@ -19,6 +20,8 @@ interface ScoreCardProps {
   /** If true, shows a subtle "Try another" ghost button below */
   showReset?: boolean
   onReset?: () => void
+  /** If true, shows a "Share your score" button below the card */
+  showShare?: boolean
 }
 
 function ScoreDimensionBar({
@@ -90,7 +93,7 @@ function FarmingBadge({ flag }: { flag: JudgeResult["farmingFlag"] }) {
   )
 }
 
-export function ScoreCard({ result, className, showReset, onReset }: ScoreCardProps) {
+export function ScoreCard({ result, className, showReset, onReset, showShare }: ScoreCardProps) {
   const compositeDisplay = useAnimatedCounter(result.compositeScore, {
     duration: 1200,
     delay: 200,
@@ -167,15 +170,29 @@ export function ScoreCard({ result, className, showReset, onReset }: ScoreCardPr
             )}
           </AnimatePresence>
 
-          {/* Reset action */}
-          {showReset && onReset && (
-            <div className="px-5 pb-5">
-              <button
-                onClick={onReset}
-                className="text-xs font-mono text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
-              >
-                Score another →
-              </button>
+          {/* Actions row */}
+          {(showReset || showShare) && (
+            <div className="px-5 pb-5 flex items-center gap-4">
+              {showReset && onReset && (
+                <button
+                  onClick={onReset}
+                  className="text-xs font-mono text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+                >
+                  Score another →
+                </button>
+              )}
+              {showShare && (
+                <button
+                  onClick={() => window.open(buildTwitterShareUrl(result), '_blank', 'noopener')}
+                  className={cn(
+                    "ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-sm border text-xs font-mono uppercase tracking-widest transition-all",
+                    "border-primary/40 text-primary bg-primary/10 hover:bg-primary/20"
+                  )}
+                >
+                  <Share2 size={12} />
+                  Share
+                </button>
+              )}
             </div>
           )}
         </div>

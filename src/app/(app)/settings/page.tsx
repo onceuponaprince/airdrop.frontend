@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { useSearchParams } from 'next/navigation';
 import { staggerContainer, staggerItem } from '@/lib/animations';
 import { api } from '@/lib/api';
 import { useNotificationStore } from '@/stores/useNotificationStore';
@@ -52,10 +51,9 @@ interface SporeTenantContextResponseWire {
 
 export default function SettingsPage() {
   const notify = useNotificationStore((s) => s.push);
-  const searchParams = useSearchParams();
 
   useEffect(() => {
-    const billingState = searchParams.get('billing');
+    const billingState = new URLSearchParams(window.location.search).get('billing');
     if (billingState === 'success') {
       notify({
         type: 'success',
@@ -70,7 +68,7 @@ export default function SettingsPage() {
         message: 'No billing changes were applied.',
       });
     }
-  }, [notify, searchParams]);
+  }, [notify]);
 
   const profile = useQuery({
     queryKey: ['settings', 'profile'],
@@ -184,6 +182,66 @@ export default function SettingsPage() {
         type: 'error',
         title: 'Portal failed',
         message: error instanceof Error ? error.message : 'Unable to open Stripe billing portal.',
+      });
+    },
+  });
+
+  const exportAccountData = useMutation({
+    mutationFn: async () => {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('Authenticate before exporting your data.');
+      }
+      api.setToken(token);
+      return api.get<Record<string, unknown>>('/auth/me/export/');
+    },
+    onSuccess: (data) => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: 'application/json;charset=utf-8;',
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'airdrop-works-account-export.json';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
+      notify({
+        type: 'success',
+        title: 'Export ready',
+        message: 'Your account export has been downloaded.',
+      });
+    },
+    onError: (error) => {
+      notify({
+        type: 'error',
+        title: 'Export failed',
+        message: error instanceof Error ? error.message : 'Unable to export account data.',
+      });
+    },
+  });
+
+  const deleteAccount = useMutation({
+    mutationFn: async () => {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('Authenticate before deleting your account.');
+      }
+      api.setToken(token);
+      return api.delete('/auth/me/delete/');
+    },
+    onSuccess: () => {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('refresh_token');
+      document.cookie = 'auth_token=; path=/; max-age=0; samesite=lax';
+      window.location.href = '/';
+    },
+    onError: (error) => {
+      notify({
+        type: 'error',
+        title: 'Delete failed',
+        message: error instanceof Error ? error.message : 'Unable to delete account.',
       });
     },
   });
@@ -311,11 +369,31 @@ export default function SettingsPage() {
       <motion.section className="space-y-4" variants={staggerItem}>
         <h2 className="text-lg font-bold font-heading text-[--destructive]">Danger Zone</h2>
         <div className="rounded-lg border border-[--destructive] bg-[--card] p-6 space-y-4">
+          <button
+            type="button"
+            onClick={() => exportAccountData.mutate()}
+            disabled={exportAccountData.isPending}
+            className="w-full px-4 py-2 rounded border border-[--border] text-[--foreground] hover:bg-[--secondary] transition-colors disabled:opacity-60"
+          >
+            {exportAccountData.isPending ? 'Exporting Account Data...' : 'Export My Data'}
+          </button>
           <button className="w-full px-4 py-2 rounded border border-[--destructive] text-[--destructive] hover:bg-[--destructive] hover:text-[--destructive-foreground] transition-colors">
             Disconnect Wallet
           </button>
-          <button className="w-full px-4 py-2 rounded border border-[--destructive] text-[--destructive] hover:bg-[--destructive] hover:text-[--destructive-foreground] transition-colors">
-            Delete Account
+          <button
+            type="button"
+            onClick={() => {
+              const confirmed = window.confirm(
+                'Delete your account and associated records? This action cannot be undone.'
+              );
+              if (confirmed) {
+                deleteAccount.mutate();
+              }
+            }}
+            disabled={deleteAccount.isPending}
+            className="w-full px-4 py-2 rounded border border-[--destructive] text-[--destructive] hover:bg-[--destructive] hover:text-[--destructive-foreground] transition-colors disabled:opacity-60"
+          >
+            {deleteAccount.isPending ? 'Deleting Account...' : 'Delete Account'}
           </button>
         </div>
       </motion.section>

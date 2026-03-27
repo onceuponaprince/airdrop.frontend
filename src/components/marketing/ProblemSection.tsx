@@ -51,7 +51,7 @@ export function ProblemSection() {
                 </div>
               </div>
               <p className="font-body text-sm text-muted-foreground leading-relaxed">
-                Writes a 15-tweet thread explaining how a DeFi protocol's liquidation engine works. Diagrams, edge cases, risk scenarios.
+                Writes a 15-tweet thread explaining how a DeFi protocol&apos;s liquidation engine works. Diagrams, edge cases, risk scenarios.
               </p>
               <div className="flex items-center gap-2">
                 <XCircle size={14} className="text-destructive flex-shrink-0" />
@@ -72,7 +72,7 @@ export function ProblemSection() {
                 </div>
               </div>
               <p className="font-body text-sm text-muted-foreground leading-relaxed italic">
-                "GM wagmi let's go $TOKEN" — posted 200 times across 50 Discord servers. Zero insight. Zero effort.
+                &quot;GM wagmi let&apos;s go $TOKEN&quot; — posted 200 times across 50 Discord servers. Zero insight. Zero effort.
               </p>
               <div className="flex items-center gap-2">
                 <div className="w-3.5 h-3.5 rounded-full bg-destructive/20 border border-destructive/40 flex-shrink-0" />

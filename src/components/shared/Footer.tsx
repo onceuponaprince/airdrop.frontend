@@ -16,6 +16,7 @@ const FOOTER_LINKS = {
   Legal: [
     { label: "Privacy Policy",   href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
+    { label: "Data Processing Addendum", href: "/legal/dpa" },
   ],
 }
 

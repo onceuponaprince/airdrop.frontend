@@ -164,6 +164,7 @@ export function AiJudgeDemo() {
                     result={result}
                     showReset
                     onReset={handleReset}
+                    showShare
                   />
                   {/* Post-score CTA */}
                   <motion.div
@@ -173,7 +174,7 @@ export function AiJudgeDemo() {
                     className="mt-4 p-4 rounded-[var(--radius)] border border-primary/20 bg-primary/5 text-center"
                   >
                     <p className="font-body text-xs text-muted-foreground mb-3">
-                      This is one tweet. Imagine scoring everything you've ever written.
+                      This is one tweet. Imagine scoring everything you&apos;ve ever written.
                     </p>
                     <ArcadeButton
                       size="sm"

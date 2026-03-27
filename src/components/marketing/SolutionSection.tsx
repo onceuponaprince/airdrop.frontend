@@ -1,6 +1,5 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { Wifi, Brain, TrendingUp, Gift } from "lucide-react"
 import { AnimatedSection, StaggerItem } from "@/components/shared/AnimatedSection"
 import { ArcadeCard } from "@/components/themed/ArcadeCard"
@@ -55,7 +54,7 @@ export function SolutionSection() {
           <div className="absolute left-[27px] sm:left-[35px] top-8 bottom-8 w-px bg-gradient-to-b from-primary/40 via-accent/20 to-transparent hidden sm:block" />
 
           <div className="space-y-6">
-            {STEPS.map((step, i) => {
+            {STEPS.map((step) => {
               const Icon = step.icon
               return (
                 <StaggerItem key={step.number}>

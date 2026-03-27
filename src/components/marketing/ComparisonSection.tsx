@@ -1,6 +1,5 @@
 "use client"
 
-import { Check, X, Minus } from "lucide-react"
 import { AnimatedSection } from "@/components/shared/AnimatedSection"
 import { cn } from "@/lib/utils"
 
@@ -62,7 +61,7 @@ export function ComparisonSection() {
                 </tr>
               </thead>
               <tbody>
-                {ROWS.map((row, i) => (
+                {ROWS.map((row) => (
                   <tr
                     key={row.label}
                     className={cn(

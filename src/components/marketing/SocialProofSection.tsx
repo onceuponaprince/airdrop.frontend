@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
 import { AnimatedSection } from "@/components/shared/AnimatedSection"
 import { useAnimatedCounter } from "@/hooks/useAnimatedCounter"
 import { ArcadeCard } from "@/components/themed/ArcadeCard"

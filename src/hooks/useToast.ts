@@ -60,6 +60,13 @@ const listeners: Array<(state: State) => void> = []
 let memoryState: State = { toasts: [] }
 
 function dispatch(action: Action) {
+  if (action.type === "DISMISS_TOAST") {
+    if (action.toastId) {
+      addToRemoveQueue(action.toastId, dispatch)
+    } else {
+      memoryState.toasts.forEach((toast) => addToRemoveQueue(toast.id, dispatch))
+    }
+  }
   memoryState = reducer(memoryState, action)
   listeners.forEach((l) => l(memoryState))
 }

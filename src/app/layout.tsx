@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { fontVariables } from "@/lib/fonts"
+import { CookieConsentBanner } from "@/components/shared/CookieConsentBanner"
 import { Providers } from "@/providers/Providers"
 import { Analytics } from "@vercel/analytics/react"
 import "@/app/globals.css"
@@ -63,6 +64,7 @@ export default function RootLayout({
     <html lang="en" className={fontVariables} suppressHydrationWarning>
       <body className="bg-background text-foreground font-body antialiased min-h-screen">
         <Providers>{children}</Providers>
+        <CookieConsentBanner />
         <Analytics />
       </body>
     </html>

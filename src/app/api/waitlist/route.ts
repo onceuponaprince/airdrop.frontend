@@ -183,6 +183,9 @@ function buildEmailHtml({
                     <p style="margin:0 0 12px;font-size:13px;color:#E8ECF4;">
                       Each referral bumps you higher. Share your link:
                     </p>
+                    <p style="margin:0 0 8px;font-family:monospace;font-size:12px;color:#6B7280;">
+                      Code: ${referralCode}
+                    </p>
                     <p style="margin:0;font-family:monospace;font-size:12px;color:#10B981;
                                word-break:break-all;background:#13141D;padding:10px 12px;border-radius:4px;
                                border:1px solid #1F2937;">

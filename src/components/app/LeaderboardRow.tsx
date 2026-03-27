@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { RarityBadge } from '@/components/themed/RarityBadge';
 import { clsx } from 'clsx';
 
 interface LeaderboardRowProps {
@@ -18,7 +17,7 @@ export function LeaderboardRow({
   address,
   xp,
   branch,
-  avatar,
+  avatar: _avatar,
   isCurrentUser,
 }: LeaderboardRowProps) {
   const displayAddress = address.slice(0, 6) + '...' + address.slice(-4);

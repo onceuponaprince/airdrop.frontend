@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Script from "next/script"
+import { ConsentAwareAnalytics } from "@/components/shared/ConsentAwareAnalytics"
 import { Navigation } from "@/components/shared/Navigation"
 import { Footer } from "@/components/shared/Footer"
 
@@ -18,16 +18,7 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-        strategy="afterInteractive"
-      />
-      <Script id="ga-init" strategy="afterInteractive">{`
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag("js", new Date());
-        gtag("config", "${GA_ID}");
-      `}</Script>
+      <ConsentAwareAnalytics gaId={GA_ID} />
       <Navigation />
       <main className="flex-1 pt-16">{children}</main>
       <Footer />

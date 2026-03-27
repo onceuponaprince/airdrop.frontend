@@ -50,7 +50,7 @@ export function HeroSection() {
             className="font-heading text-4xl sm:text-5xl md:text-6xl font-bold text-foreground leading-[1.1] tracking-tight"
           >
             Bots Get Rewarded.{" "}
-            <span className="text-foreground/50">You Don't.</span>
+            <span className="text-foreground/50">You Don&apos;t.</span>
             <br />
             <span className="text-primary glow-green">We Fixed That.</span>
           </motion.h1>
@@ -60,7 +60,7 @@ export function HeroSection() {
             variants={staggerItem as Variants}
             className="font-body text-base sm:text-lg text-muted-foreground max-w-[580px] mx-auto leading-relaxed"
           >
-            AI(r)Drop's AI Judge scores contributions by what actually matters —
+            AI(r)Drop&apos;s AI Judge scores contributions by what actually matters —
             teaching value, originality, and community impact. Not likes. Not
             volume. Not who has the most alts.
           </motion.p>

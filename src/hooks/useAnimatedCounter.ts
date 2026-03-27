@@ -15,13 +15,14 @@ export function useAnimatedCounter(
   options: UseAnimatedCounterOptions = {}
 ) {
   const { duration = 1200, delay = 300, easing = easeOut } = options
-  const [displayValue, setDisplayValue] = useState(0)
+  const [displayValue, setDisplayValue] = useState(() =>
+    typeof window === "undefined" ? targetValue : 0
+  )
   const rafRef = useRef<number | null>(null)
   const startTimeRef = useRef<number | null>(null)
 
   useEffect(() => {
     if (typeof window === "undefined") {
-      setDisplayValue(targetValue)
       return
     }
 

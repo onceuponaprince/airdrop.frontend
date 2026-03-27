@@ -42,7 +42,7 @@ export function FAQSection() {
             Questions
           </p>
           <h2 className="font-heading text-3xl sm:text-4xl font-bold text-foreground">
-            You're Skeptical.{" "}
+            You&apos;re Skeptical.{" "}
             <span className="text-primary">Good.</span>
           </h2>
         </AnimatedSection>

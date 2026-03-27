@@ -31,6 +31,13 @@ class ApiClient {
       headers["Authorization"] = `Bearer ${this.accessToken}`
     }
 
+    if (typeof window !== "undefined") {
+      const activeTenant = window.localStorage.getItem("spore_active_tenant")
+      if (activeTenant && !headers["X-SPORE-TENANT"]) {
+        headers["X-SPORE-TENANT"] = activeTenant
+      }
+    }
+
     const res = await fetch(`${BASE_URL}${path}`, {
       ...options,
       headers,
